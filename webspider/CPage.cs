@@ -248,6 +248,8 @@ namespace webspider
                 HttpWebRequest myHttpWebRequest = (HttpWebRequest)WebRequest.Create(m_szURL);
                 // Sends the HttpWebRequest and waits for the response.			
                 HttpWebResponse myHttpWebResponse = (HttpWebResponse)myHttpWebRequest.GetResponse();
+                if (myHttpWebResponse.ContentType.ToLower().IndexOf("html") == -1)
+                    return false;
                 // Gets the stream associated with the response.
                 Stream receiveStream = myHttpWebResponse.GetResponseStream();
                 Encoding encode = System.Text.Encoding.GetEncoding("utf-8");
@@ -261,16 +263,10 @@ namespace webspider
                 {
                     // Dumps the 256 characters on a string and displays the string to the console.
                     String str = new String(read, 0, count);
-                    if (m_szContent.Length == 0)
-                    {
-                        if(!str.ToLower().Trim().Contains("<html")) // solo descargamos paginas webs
-                            break;
-                    }
                     m_szContent += str;
                     count = readStream.Read(read, 0, 1024);
                 }
                 SetURL(myHttpWebResponse.ResponseUri.ToString()); // actualizamos la direcion por algun redirect
-                Console.WriteLine("");
                 // Releases the resources of the response.
                 myHttpWebResponse.Close();
                 // Releases the resources of the Stream.
